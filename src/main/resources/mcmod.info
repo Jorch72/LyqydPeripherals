@@ -1,0 +1,16 @@
+[
+{
+  "modid": "LyqydPeripherals",
+  "name": "LyqydPeripherals",
+  "description": "Lyqyd's Peripherals.",
+  "version": "${version}",
+  "mcversion": "${mcversion}",
+  "url": "",
+  "updateUrl": "",
+  "authorList": ["Lyqyd"],
+  "credits": "",
+  "logoFile": "",
+  "screenshots": [],
+  "dependencies": []
+}
+]
