@@ -41,7 +41,7 @@ public class PeripheralBase implements IPeripheral {
 	
 	@Override
 	public String getType() {
-		return "quadbase";
+		return "counter";
 	}
 
 	@Override

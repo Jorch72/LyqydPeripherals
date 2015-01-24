@@ -32,10 +32,11 @@ public class LyqydPeripherals {
 	@EventHandler
 	public void preInit(FMLPreInitializationEvent event) {
 		LPLog.init();
-		
+		proxy.preInit();
 	}
 	
 	@EventHandler
 	public void init(FMLInitializationEvent event) {
+		proxy.init();
 	}
 }

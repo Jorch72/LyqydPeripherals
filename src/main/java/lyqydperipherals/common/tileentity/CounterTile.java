@@ -1,6 +1,8 @@
 package lyqydperipherals.common.tileentity;
 
+import cpw.mods.fml.common.registry.GameData;
 import lyqydperipherals.common.peripheral.CounterBlockPeripheral;
+import lyqydperipherals.common.util.LPLog;
 import dan200.computercraft.api.lua.ILuaContext;
 import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.peripheral.IComputerAccess;
@@ -8,10 +10,13 @@ import dan200.computercraft.api.peripheral.IPeripheral;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.ISidedInventory;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 
-public class CounterTile extends TileEntity implements IPeripheral, IInventory, ISidedInventory {
+public class CounterTile extends TileEntity implements IPeripheral, ISidedInventory {
 	
 	public CounterTile() {
 		this.peripheral = new CounterBlockPeripheral(this);
@@ -20,12 +25,45 @@ public class CounterTile extends TileEntity implements IPeripheral, IInventory, 
 	private ItemStack[] inventory = new ItemStack[2];
 	private CounterBlockPeripheral peripheral;
 	
+	public void readFromNBT(NBTTagCompound tag)
+    {
+        super.readFromNBT(tag);
+        NBTTagList nbttaglist = tag.getTagList("Items", 10);
+        this.inventory = new ItemStack[this.getSizeInventory()];
+
+        for (int i = 0; i < 2; ++i) {
+            NBTTagCompound nbttagcompound1 = nbttaglist.getCompoundTagAt(i);
+            int j = nbttagcompound1.getByte("Slot") & 255;
+
+            if (j >= 0 && j < this.inventory.length) {
+                this.inventory[j] = ItemStack.loadItemStackFromNBT(nbttagcompound1);
+            }
+        }
+    }
+
+    public void writeToNBT(NBTTagCompound tag)
+    {
+        super.writeToNBT(tag);
+        NBTTagList nbttaglist = new NBTTagList();
+
+        for (int i = 0; i < 2; ++i) {
+            if (this.inventory[i] != null) {
+                NBTTagCompound nbttagcompound1 = new NBTTagCompound();
+                nbttagcompound1.setByte("Slot", (byte)i);
+                this.inventory[i].writeToNBT(nbttagcompound1);
+                nbttaglist.appendTag(nbttagcompound1);
+            }
+        }
+
+        tag.setTag("Items", nbttaglist);
+    }
+	
 	@Override
 	public void updateEntity() {
 		super.updateEntity();
 		if (!worldObj.isRemote) {
 			if (this.inventory[1] == null && this.inventory[0] != null) {
-				peripheral.queueEvent("item_count", new Object[] {inventory[0].getUnlocalizedName(), inventory[0].getItemDamage(), inventory[0].stackSize});
+				peripheral.queueEvent("item_count", new Object[] {GameData.getItemRegistry().getNameForObject(inventory[0].getItem()), inventory[0].getItemDamage(), inventory[0].stackSize});
 				this.inventory[1] = this.inventory[0];
 				this.inventory[0] = null;
 				this.markDirty();
@@ -66,7 +104,7 @@ public class CounterTile extends TileEntity implements IPeripheral, IInventory, 
 	}
 
 	@Override
-	public int[] getAccessibleSlotsFromSide(int p_94128_1_) {
+	public int[] getAccessibleSlotsFromSide(int side) {
 		return new int[] {0, 1};
 	}
 
@@ -100,27 +138,31 @@ public class CounterTile extends TileEntity implements IPeripheral, IInventory, 
 
 	@Override
 	public ItemStack decrStackSize(int slot, int count) {
-		if (this.inventory[slot] != null) {
-            ItemStack itemstack;
-
-            if (this.inventory[slot].stackSize <= count) {
-                itemstack = this.inventory[slot];
-                this.inventory[slot] = null;
-                this.markDirty();
-                return itemstack;
-            } else {
-                itemstack = this.inventory[slot].splitStack(count);
-
-                if (this.inventory[slot].stackSize == 0) {
-                    this.inventory[slot] = null;
-                }
-
-                this.markDirty();
-                return itemstack;
-            }
-        } else {
-            return null;
-        }
+		if (slot == 1) {
+			if (this.inventory[slot] != null) {
+	            ItemStack itemstack;
+	
+	            if (this.inventory[slot].stackSize <= count) {
+	                itemstack = this.inventory[slot];
+	                this.inventory[slot] = null;
+	                this.markDirty();
+	                return itemstack;
+	            } else {
+	                itemstack = this.inventory[slot].splitStack(count);
+	
+	                if (this.inventory[slot].stackSize == 0) {
+	                    this.inventory[slot] = null;
+	                }
+	
+	                this.markDirty();
+	                return itemstack;
+	            }
+	        } else {
+	            return null;
+	        }
+		} else {
+			return null;
+		}
 	}
 
 	@Override
