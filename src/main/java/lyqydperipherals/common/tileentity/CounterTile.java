@@ -57,18 +57,22 @@ public class CounterTile extends TileEntity implements IPeripheral, ISidedInvent
 
         tag.setTag("Items", nbttaglist);
     }
+    
+    private void moveItems() {
+    	if (!worldObj.isRemote) {
+    		if (this.inventory[1] == null && this.inventory[0] != null) {
+				peripheral.queueEvent("item_count", new Object[] {GameData.getItemRegistry().getNameForObject(inventory[0].getItem()), inventory[0].getItemDamage(), inventory[0].stackSize});
+				this.inventory[1] = this.inventory[0].copy();
+				this.inventory[0] = null;
+				this.markDirty();
+			}
+    	}
+    }
 	
 	@Override
 	public void updateEntity() {
 		super.updateEntity();
-		if (!worldObj.isRemote) {
-			if (this.inventory[1] == null && this.inventory[0] != null) {
-				peripheral.queueEvent("item_count", new Object[] {GameData.getItemRegistry().getNameForObject(inventory[0].getItem()), inventory[0].getItemDamage(), inventory[0].stackSize});
-				this.inventory[1] = this.inventory[0];
-				this.inventory[0] = null;
-				this.markDirty();
-			}
-		}
+		this.moveItems();
 	}
 	
 	@Override
@@ -186,6 +190,12 @@ public class CounterTile extends TileEntity implements IPeripheral, ISidedInvent
 	        }
 	
 	        this.markDirty();
+	        this.moveItems();
+		} else {
+			if (slot == 1 && (item == null) || (item.areItemStacksEqual(item, this.inventory[1]) && item.stackSize <= this.inventory[1].stackSize)) {
+				this.inventory[slot] = item;
+				this.markDirty();
+			}
 		}
 	}
 
