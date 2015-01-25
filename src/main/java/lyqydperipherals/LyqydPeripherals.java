@@ -10,7 +10,7 @@ import lyqydperipherals.common.CommonProxy;
 import lyqydperipherals.common.block.CounterBlock;
 import lyqydperipherals.common.util.LPLog;
 
-@Mod(modid = "LyqydPeripherals", name = "LyqydPeripherals", version = "0.0.1")
+@Mod(modid = "LyqydPeripherals", name = "LyqydPeripherals", version = "0.0.2")
 public class LyqydPeripherals {
 	
 	public static class Blocks {
