@@ -61,7 +61,7 @@ public class CounterTile extends TileEntity implements IPeripheral, ISidedInvent
     private void moveItems() {
     	if (!worldObj.isRemote) {
     		if (this.inventory[1] == null && this.inventory[0] != null) {
-				peripheral.queueEvent("item_count", new Object[] {GameData.getItemRegistry().getNameForObject(inventory[0].getItem()), inventory[0].getItemDamage(), inventory[0].stackSize});
+				peripheral.queueEvent("item_count", new Object[] {null, GameData.getItemRegistry().getNameForObject(inventory[0].getItem()), inventory[0].getItemDamage(), inventory[0].stackSize});
 				this.inventory[1] = this.inventory[0].copy();
 				this.inventory[0] = null;
 				this.markDirty();
