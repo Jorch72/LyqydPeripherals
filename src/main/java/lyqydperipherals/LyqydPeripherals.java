@@ -10,7 +10,7 @@ import lyqydperipherals.common.CommonProxy;
 import lyqydperipherals.common.block.CounterBlock;
 import lyqydperipherals.common.util.LPLog;
 
-@Mod(modid = "LyqydPeripherals", name = "LyqydPeripherals", version = "0.0.4")
+@Mod(modid = "LyqydPeripherals", name = "LyqydPeripherals", version = "0.0.5", dependencies = "required-after:ComputerCraft")
 public class LyqydPeripherals {
 	
 	public static class Blocks {
@@ -20,9 +20,7 @@ public class LyqydPeripherals {
 	public static class Config {
 
 	}
-	
 
-	
 	@Instance(value = "LyqydPeripherals")
 	public static LyqydPeripherals instance;
 	
