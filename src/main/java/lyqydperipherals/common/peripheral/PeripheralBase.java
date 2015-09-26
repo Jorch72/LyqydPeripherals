@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import net.minecraft.tileentity.TileEntity;
 import dan200.computercraft.api.peripheral.IComputerAccess;
 import dan200.computercraft.api.lua.ILuaContext;
 import dan200.computercraft.api.lua.LuaException;
@@ -15,6 +16,15 @@ public class PeripheralBase implements IPeripheral {
 
 	private ArrayList<ILuaMethod> methods = new ArrayList<ILuaMethod>();
 	private Map<Integer,IComputerAccess> attached = Collections.synchronizedMap(new HashMap());
+	protected TileEntity tile;
+	
+	public PeripheralBase() {
+		
+	}
+	
+	public PeripheralBase(TileEntity tile) {
+		this.tile = tile;
+	}
 	
 	public void queueEvent(String eventName, Object[] args) {
 		int sideIndex = -1;
@@ -41,7 +51,7 @@ public class PeripheralBase implements IPeripheral {
 	
 	@Override
 	public String getType() {
-		return "counter";
+		return "untyped";
 	}
 
 	@Override
@@ -75,6 +85,16 @@ public class PeripheralBase implements IPeripheral {
 
 	@Override
 	public boolean equals(IPeripheral other) {
+		if(other == null) {
+			return false;
+		}
+		if(this == other) {
+			return true;
+		}
+		if(other instanceof TileEntity) {
+			TileEntity tother = (TileEntity) other;
+			return tother.getWorldObj().equals(tile.getWorldObj()) && tother.xCoord == tile.xCoord && tother.yCoord == tile.yCoord && tother.zCoord == tile.zCoord;
+		}
 		return false;
 	}
 

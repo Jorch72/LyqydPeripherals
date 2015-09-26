@@ -104,7 +104,7 @@ public class CounterTile extends TileEntity implements IPeripheral, ISidedInvent
 
 	@Override
 	public boolean equals(IPeripheral other) {
-		return false;
+		return peripheral.equals(other);
 	}
 
 	@Override
